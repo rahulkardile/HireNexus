@@ -1,7 +1,37 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const UserSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  role: "employer" | "job-seeker";
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+  };
+  bio?: string;
+  experience?: Array<{
+    company: string;
+    role: string;
+    startDate: Date;
+    endDate?: Date;
+    description?: string;
+  }>;
+  skills: string[];
+  profilePicture?: string;
+  socialLinks?: {
+    linkedin?: string;
+    github?: string;
+    portfolio?: string;
+  };
+  comparePassword(candidatePassword: string): Promise<boolean>; // Add this method to the interface
+}
+
+const UserSchema = new mongoose.Schema<IUser>(
   {
     name: {
       type: String,
@@ -116,4 +146,4 @@ UserSchema.methods.comparePassword = async function (
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model<IUser>("User", UserSchema);
