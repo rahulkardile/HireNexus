@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 // import jobRoutes from "./routes/jobRoutes";
 // import userRoutes from "./routes/userRoutes";
-// import connectDB from "./config/db";
+import connectDB from "./config/db";
 
 dotenv.config();
-// connectDB();
+connectDB();
 
 const app = express();
 
@@ -24,3 +24,4 @@ app.get("/", (req, res)=>{
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+// 
