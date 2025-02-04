@@ -3,29 +3,29 @@ import { Types } from "mongoose";
 import Job, { IJob } from "../models/jobModel";
 import { ICustomRequest } from "../types/types";
 
-export const createJob = async (req: ICustomRequest, res: Response): Promise<void> => {
+export const createJob = async (req: ICustomRequest, res: any): Promise<void> => {
   try {
-    const { title, description, company, location, salary, jobType, skills, experienceLevel, skillsRequired, deadline, status, category } = req.body;
+    const { title, description, company, location, salary, jobType, experienceLevel, skillsRequired, deadline, status, category } = req.body;
 
-    if (!title || !description || !company || !location || !salary || !skills || !category || !jobType || !experienceLevel || !skillsRequired || !deadline || !status ) {
+    if (!title || !description || !company || !location || !salary || !category || !jobType || !experienceLevel || !skillsRequired || !deadline || !status ) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
-
+    console.log(req.user);
+    
     const job: IJob = new Job({
       title,
       description,
       company,
       location,
       salary,
-      skills,
       category,
       jobType, 
       experienceLevel, 
       skillsRequired, 
       deadline, 
       status,
-      postedBy: req.user.id,
+      postedBy: req.user.userId,
     });
 
     await job.save();
@@ -33,10 +33,12 @@ export const createJob = async (req: ICustomRequest, res: Response): Promise<voi
     return;
   } catch (error: any) {
     res.status(500).json({ message: "Server error", error: error.message });
+    console.warn(error);
+    
   }
 };
 
-export const getAllJobs = async (req: Request, res: Response): Promise<void> => {
+export const getAllJobs = async (req: Request, res: any): Promise<void> => {
   try {
     const jobs = await Job.find().populate("postedBy", "name email");
 
@@ -51,7 +53,7 @@ export const getAllJobs = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const getJobById = async (req: Request, res: Response): Promise<void> => {
+export const getJobById = async (req: Request, res: any): Promise<void> => {
   try {
     const jobId = req.params.id;
 
@@ -73,7 +75,7 @@ export const getJobById = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const updateJob = async (req: ICustomRequest, res: Response): Promise<void> => {
+export const updateJob = async (req: ICustomRequest, res: any): Promise<void> => {
   try {
     const jobId = req.params.id;
 
@@ -90,12 +92,11 @@ export const updateJob = async (req: ICustomRequest, res: Response): Promise<voi
     }
 
     // Check if the user is the owner of the job
-    if (job.postedBy.toString() !== req.user.id) {
+    if (job.postedBy.toString() !== req.user.userId) {
       res.status(403).json({ message: "Unauthorized" });
       return;
     }
 
-    // Update job details
     Object.assign(job, req.body);
     await job.save();
 
@@ -105,8 +106,7 @@ export const updateJob = async (req: ICustomRequest, res: Response): Promise<voi
   }
 };
 
-// ✅ DELETE JOB
-export const deleteJob = async (req: ICustomRequest, res: Response): Promise<void> => {
+export const deleteJob = async (req: ICustomRequest, res: any): Promise<void> => {
   try {
     const jobId = req.params.id;
 
@@ -122,8 +122,7 @@ export const deleteJob = async (req: ICustomRequest, res: Response): Promise<voi
       return;
     }
 
-    // Check if the user is the owner of the job
-    if (job.postedBy.toString() !== req.user.id) {
+    if (job.postedBy.toString() !== req.user.userId) {
       res.status(403).json({ message: "Unauthorized" });
       return;
     }

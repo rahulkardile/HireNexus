@@ -8,8 +8,7 @@ import {
 } from "../controller/jobController";
 import { createJobValidator, jobIdValidation } from "../validators/jobValidations";
 import validateRequest from "../middlewares/validateRequest";
-import authMiddleware from "../middlewares/authMiddleware";
-
+import { protect as authMiddleware } from "../middlewares/authMiddleware";
 const router = express.Router();
 
 router.post("/", authMiddleware, createJobValidator, validateRequest, createJob);

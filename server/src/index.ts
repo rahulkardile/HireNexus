@@ -4,9 +4,10 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import xssClean from "xss-clean";
+
 import userRoutes from "./routes/userRoutes";
 import connectDB from "./config/db";
-
+import jobRoutes from "./routes/jobRoutes"
 dotenv.config();
 connectDB();
 
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/job", jobRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
