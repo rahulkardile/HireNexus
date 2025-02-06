@@ -11,7 +11,6 @@ export const createJob = async (req: ICustomRequest, res: any): Promise<void> =>
       res.status(400).json({ message: "All fields are required" });
       return;
     }
-    console.log(req.user);
     
     const job: IJob = new Job({
       title,
@@ -33,8 +32,6 @@ export const createJob = async (req: ICustomRequest, res: any): Promise<void> =>
     return;
   } catch (error: any) {
     res.status(500).json({ message: "Server error", error: error.message });
-    console.warn(error);
-    
   }
 };
 
@@ -91,7 +88,6 @@ export const updateJob = async (req: ICustomRequest, res: any): Promise<void> =>
       return;
     }
 
-    // Check if the user is the owner of the job
     if (job.postedBy.toString() !== req.user.userId) {
       res.status(403).json({ message: "Unauthorized" });
       return;
